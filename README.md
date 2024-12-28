@@ -1,12 +1,12 @@
 # Contractor
 
-## Project Overview
+## Tool Overview
 This is a tool that allows multiple workers to register, be assigned tasks, and submit tasks. It uses Flask as the backend framework and integrates wandb for logging and monitoring.
 
 ## Installation Steps
-1. Clone the project to your local machine:
+1. Clone the repo to your local machine:
     ```bash
-    git clone <repository_url>
+    git clone git@github.com:bebetterest/contractor.git
     cd contractor
     ```
 
