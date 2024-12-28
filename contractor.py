@@ -17,9 +17,9 @@ lock = threading.Lock()
 
 def init_tasks(
         task_infos: dict = {
-            "num": 8192,
+            "num": 8139,
         },
-        chunk_size: int = 96,
+        chunk_size: int = 64,
 ):
     logging.info("Initializing tasks")
     global worker_status
@@ -67,6 +67,18 @@ def rank_task(task_status_list):
         )
     )
     return task_status_list
+
+
+def get_reward(
+        task_idx, task_has_done_flag,
+        worker_done_task_num, total_done_task_num, total_task_num
+):
+    if task_has_done_flag:
+        return 1
+    reward_decay_factor =\
+        (total_task_num - total_done_task_num + worker_done_task_num) / total_task_num
+    reward = 1 + (1000 - 1) * reward_decay_factor
+    return reward
 
 
 def sync_to_wandb():
@@ -223,10 +235,18 @@ def submit_task():
         task_status[task_idx]['time_cost'] = time_tmp - task_status[task_idx]['last_update_time']
         task_status[task_idx]['last_update_time'] = time_tmp
 
-        worker_status[worker_id]['reward'] += 1 if not task_has_done_flag else 0.000001
         worker_status[worker_id]['done_micro_tasks'].append(task_idx)
         worker_status[worker_id]['assigned_micro_task'] = None
         worker_status[worker_id]['last_update_time'] = time.time()
+        worker_status[worker_id]['reward'] += get_reward(
+            task_idx, task_has_done_flag,
+            len(worker_status[worker_id]['done_micro_tasks']),
+            len([
+                _ for _ in task_status.values()
+                if _['done_flag']
+            ]),
+            len(task_status),
+        )
         sync_to_wandb()
     return jsonify({'message': 'task submitted successfully'}), 200
 
