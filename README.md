@@ -1,9 +1,9 @@
-# Contractor
+# Contractor 🚀
 
-## Tool Overview
+## Tool Overview 🛠️
 This is a tool that allows multiple workers to register, be assigned tasks, and submit tasks. It uses Flask as the backend framework and integrates wandb for logging and monitoring.
 
-## Installation Steps
+## Installation Steps 📦
 1. Clone the repo to your local machine:
     ```bash
     git clone git@github.com:bebetterest/contractor.git
@@ -15,7 +15,7 @@ This is a tool that allows multiple workers to register, be assigned tasks, and 
     pip install -r requirements.txt
     ```
 
-## Usage
+## Usage 🖥️
 1. Start the Flask server:
     ```bash
     python contractor.py
@@ -26,8 +26,8 @@ This is a tool that allows multiple workers to register, be assigned tasks, and 
     python test_contractor.py
     ```
 
-## API Endpoints
-### Register Worker
+## API Endpoints 🌐
+### Register Worker 👷
 - URL: `/worker_register`
 - Method: `POST`
 - Request Data:
@@ -40,7 +40,7 @@ This is a tool that allows multiple workers to register, be assigned tasks, and 
     - Success: Status code `200`, message `{'message': 'worker registered successfully'}`
     - Failure: Status code `400`, error message `{'error': 'worker_id is required'}` or `{'error': 'worker_id already registered, please use a different worker_id'}`
 
-### Assign Task
+### Assign Task 📋
 - URL: `/assign_task`
 - Method: `POST`
 - Request Parameters:
@@ -50,7 +50,7 @@ This is a tool that allows multiple workers to register, be assigned tasks, and 
     - Failure: Status code `400`, error message `{'error': 'worker_id is required'}` or `{'error': 'worker_id not registered'}` or `{'error': 'worker already has a task assigned'}`
     - No Task: Status code `200`, message `{'message': 'no task to assign'}` or `{'message': 'all tasks are done'}`
 
-### Submit Task
+### Submit Task ✅
 - URL: `/submit_task`
 - Method: `POST`
 - Request Parameters:
@@ -59,5 +59,9 @@ This is a tool that allows multiple workers to register, be assigned tasks, and 
     - Success: Status code `200`, message `{'message': 'task submitted successfully'}`
     - Failure: Status code `400`, error message `{'error': 'worker_id is required'}` or `{'error': 'worker_id not registered'}` or `{'error': 'no task assigned to worker'}`
 
-## Acknowledgements
+## Acknowledgements 🙏
 Thanks to vscode copilot for assistance with code and documentation.
+
+enjoy:)
+
+🤯betterest🤯
