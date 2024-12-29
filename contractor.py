@@ -28,7 +28,7 @@ def init_tasks(
         task_infos: dict = {
             "num": 8139,
         },
-        chunk_size: int = 32,
+        chunk_size: int = 16,
 ):
     logging.info("Initializing tasks")
     global worker_status
@@ -96,8 +96,7 @@ def sync_to_wandb():
     global wandb_task_table
     global wandb_worker_table
 
-    # task_columns = ["idx", "done_flag", "assign_num", "assigned_workers", "time_cost", "last_update_time", "content"]
-    task_columns = ["idx", "done_flag", "assign_num", "assigned_workers", "time_cost", "last_update_time"]
+    task_columns = ["idx", "done_flag", "assign_num", "assigned_workers", "time_cost", "last_update_time", "content"]
     wandb_task_table = wandb.Table(columns=task_columns)
     for task in task_status.values():
         wandb_task_table.add_data(
@@ -107,7 +106,7 @@ def sync_to_wandb():
             str(task["assigned_workers"]),
             task["time_cost"],
             time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(task["last_update_time"])) if task["last_update_time"] else None,
-            # str(task["content"]),
+            str(task["content"]),
         )
 
     worker_columns = ["worker_id", "reward", "assigned_micro_task", "last_update_time", "done_micro_tasks"]
