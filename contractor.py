@@ -1,10 +1,12 @@
-from flask import Flask, request, jsonify
-import threading
-import threading
-import logging
-import wandb
 import math
 import time
+import logging
+import threading
+
+import wandb
+import pandas as pd
+from flask import Flask, request, jsonify
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -14,7 +16,7 @@ logging.basicConfig(
         logging.FileHandler("contractor.log")
     ]
 )
-wandb.init(project=f"task-contractor_{time.strftime('%Y%m%d_%H%M%S')}", name="test")
+wandb.init(project="task-contractor", name=f"test_{time.strftime('%Y%m%d_%H%M%S')}")
 
 app = Flask(__name__)
 task_status: dict = {}
@@ -84,15 +86,40 @@ def get_reward(
         return 1
     reward_decay_factor =\
         (total_task_num - total_done_task_num + worker_done_task_num) / total_task_num
-    reward = 1 + (1000 - 1) * reward_decay_factor
+    reward = 1 + round((1000 - 1) * reward_decay_factor)
     return reward
 
 
 def sync_to_wandb():
     global task_status
     global worker_status
-    wandb_task_table = rank_task(list(task_status.values()))
-    wandb_worker_table = rank_worker(list(worker_status.values()))
+    global wandb_task_table
+    global wandb_worker_table
+
+    task_columns = ["idx", "done_flag", "assign_num", "assigned_workers", "time_cost", "last_update_time", "content"]
+    wandb_task_table = wandb.Table(columns=task_columns)
+    for task in task_status.values():
+        wandb_task_table.add_data(
+            task["idx"],
+            task["done_flag"],
+            task["assign_num"],
+            str(task["assigned_workers"]),
+            task["time_cost"],
+            time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(task["last_update_time"])) if task["last_update_time"] else None,
+            str(task["content"]),
+        )
+
+    worker_columns = ["worker_id", "reward", "assigned_micro_task", "last_update_time", "done_micro_tasks"]
+    wandb_worker_table = wandb.Table(columns=worker_columns)
+    for worker in worker_status.values():
+        wandb_worker_table.add_data(
+            worker["worker_id"],
+            worker["reward"],
+            worker["assigned_micro_task"],
+            time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(worker["last_update_time"])) if worker["last_update_time"] else None,
+            str(worker["done_micro_tasks"])
+        )
+
     time_cost_list = [
         task['time_cost']
         for task in task_status.values()
@@ -237,7 +264,7 @@ def submit_task():
         task_has_done_flag = task_status[task_idx]['done_flag']
         task_status[task_idx]['done_flag'] = True
         task_status[task_idx]['assign_num'] -= 1
-        task_status[task_idx]['assigned_workers'].remove(worker_id)
+        # task_status[task_idx]['assigned_workers'].remove(worker_id)
         time_tmp = time.time()
         task_status[task_idx]['time_cost'] = time_tmp - task_status[task_idx]['last_update_time']
         task_status[task_idx]['last_update_time'] = time_tmp
