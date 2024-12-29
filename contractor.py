@@ -28,7 +28,7 @@ def init_tasks(
         task_infos: dict = {
             "num": 8139,
         },
-        chunk_size: int = 64,
+        chunk_size: int = 32,
 ):
     logging.info("Initializing tasks")
     global worker_status
