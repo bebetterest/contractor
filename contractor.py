@@ -6,7 +6,14 @@ import wandb
 import math
 import time
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler("contractor.log")
+    ]
+)
 wandb.init(project=f"task-contractor_{time.strftime('%Y%m%d_%H%M%S')}", name="test")
 
 app = Flask(__name__)
