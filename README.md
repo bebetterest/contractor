@@ -1,7 +1,9 @@
 # Contractor 🚀
 
 ## Tool Overview 🛠️
-This is a tool that allows multiple workers to register, be assigned tasks, and submit tasks. It uses Flask as the backend framework and integrates wandb for logging and monitoring.
+This is a tool that allows multiple workers to register, be assigned tasks, and submit tasks. It uses Flask as the backend framework and integrates wandb for logging and monitoring. It is designed for the scenario where:
+- a large number of separatable tasks need to be completed. (for example, inference LLM on massive amounts of instruction prompts)
+- only transient and dynamic workers are available and they may be killed or restarted at anytime. Once a worker is killed, the storage is gone as well. (for example, low-priority jobs)
 
 ## Installation Steps 📦
 1. Clone the repo to your local machine:
@@ -16,6 +18,7 @@ This is a tool that allows multiple workers to register, be assigned tasks, and 
     ```
 
 ## Usage 🖥️
+
 1. Start the Flask server:
     ```bash
     python contractor.py
@@ -25,6 +28,8 @@ This is a tool that allows multiple workers to register, be assigned tasks, and 
     ```bash
     python test_contractor.py
     ```
+
+- (An application script is provided in `example_run_with_contractor.sh`)
 
 ## API Endpoints 🌐
 ### Register Worker 👷
