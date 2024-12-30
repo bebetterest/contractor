@@ -53,7 +53,7 @@ This is a tool that allows multiple workers to register, be assigned tasks, and 
 - Response:
     - Success: Status code `200`, task information `{"task_id": int, 'task': list}`
     - Failure: Status code `400`, error message `{'error': 'worker_id is required'}` or `{'error': 'worker_id not registered'}` or `{'error': 'worker already has a task assigned'}`
-    - No Task: Status code `200`, message `{'message': 'no task to assign'}` or `{'message': 'all tasks are done'}`
+    - No Task: Status code `400`, message `{'message': 'no task to assign'}` or `{'message': 'all tasks are done'}`
 
 ### Submit Task ✅
 - URL: `/submit_task`
@@ -64,8 +64,29 @@ This is a tool that allows multiple workers to register, be assigned tasks, and 
     - Success: Status code `200`, message `{'message': 'task submitted successfully'}`
     - Failure: Status code `400`, error message `{'error': 'worker_id is required'}` or `{'error': 'worker_id not registered'}` or `{'error': 'no task assigned to worker'}`
 
+### Finish All Tasks 🏁
+- URL: `/finish_all`
+- Method: `POST`
+- Response:
+    - Success: Status code `200`, message `{'message': 'all tasks marked as done'}`
+
+### Add Task ➕
+- URL: `/add_task`
+- Method: `POST`
+- Request Data:
+    ```json
+    {
+        "task_content": list  # The content of the new task
+    }
+    ```
+- Response:
+    - Success: Status code `200`, message `{'message': 'task added successfully', 'task_idx': new_task_idx}`
+    - Failure: Status code `400`, error message `{'error': 'task_content is required'}`
+
 ## Acknowledgements 🙏
 Thanks to vscode copilot for assistance with code and documentation.
+
+---
 
 enjoy:)
 

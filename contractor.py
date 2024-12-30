@@ -284,6 +284,60 @@ def submit_task():
         sync_to_wandb()
     return jsonify({'message': 'task submitted successfully'}), 200
 
+
+@app.route('/finish_all', methods=['POST'])
+def finish_all():
+    """
+    Mark all tasks as done.
+
+    Returns:
+    - Success: Status code 200, message {'message': 'all tasks marked as done'}
+    """
+    logging.info("Finish all tasks request received")
+    global task_status
+
+    with lock:
+        for task in task_status.values():
+            task['done_flag'] = True
+        sync_to_wandb()
+    return jsonify({'message': 'all tasks marked as done'}), 200
+
+
+@app.route('/add_task', methods=['POST'])
+def add_task():
+    """
+    Add a new task.
+
+    Request data format:
+    {
+        "task_content": list  # Required, the content of the new task
+    }
+
+    Returns:
+    - Success: Status code 200, message {'message': 'task added successfully', 'task_idx': new_task_idx}
+    - Failure: Status code 400, error message {'error': 'task_content is required'}
+    """
+    logging.info("Add task request received with data: %s", request.json)
+    data = request.json
+    task_content = data.get('task_content')
+    if not task_content:
+        return jsonify({'error': 'task_content is required'}), 400
+
+    with lock:
+        new_task_idx = max(task_status.keys(), default=-1) + 1
+        task_status[new_task_idx] = {
+            "idx": new_task_idx,
+            "content": task_content,
+            "done_flag": False,
+            "assign_num": 0,
+            "assigned_workers": [],
+            "last_update_time": None,
+            "time_cost": None,
+        }
+        sync_to_wandb()
+    return jsonify({'message': 'task added successfully', 'task_idx': new_task_idx}), 200
+
+
 if __name__ == '__main__':
     logging.info("Starting the Flask app")
     init_tasks()
