@@ -198,7 +198,7 @@ def assign_task():
     Returns:
     - Success: Status code 200, task information {"task_id": int, 'task': list}
     - Failure: Status code 400, error message {'error': 'worker_id is required'} or {'error': 'worker_id not registered'} or {'error': 'worker already has a task assigned'}
-    - No task: Status code 200, message {'message': 'no task to assign'} or {'message': 'all tasks are done'}
+    - No task: Status code 400, message {'message': 'no task to assign'} or {'message': 'all tasks are done'}
     """
     logging.info("Task assignment request received with args: %s", request.args)
     global task_status
@@ -212,12 +212,12 @@ def assign_task():
     if worker_status[worker_id]['assigned_micro_task'] is not None:
         return jsonify({'error': 'worker already has a task assigned'}), 400
     if len(task_status) == 0:
-        return jsonify({'message': 'no task to assign'}), 200
+        return jsonify({'message': 'no task to assign'}), 400
 
     with lock:
         ranked_tasks = rank_task(list(task_status.values()))
         if ranked_tasks[0]['done_flag']:
-            return jsonify({'message': 'all tasks are done'}), 200
+            return jsonify({'message': 'all tasks are done'}), 400
 
         task = ranked_tasks[0]
 
