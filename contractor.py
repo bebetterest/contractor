@@ -298,7 +298,11 @@ def finish_all():
 
     with lock:
         for task in task_status.values():
-            task['done_flag'] = True
+            if not task['done_flag']:
+                task['done_flag'] = True
+                task['assign_num'] = 0
+                task['assigned_workers'] = []
+                task['last_update_time'] = time.time()
         sync_to_wandb()
     return jsonify({'message': 'all tasks marked as done'}), 200
 
